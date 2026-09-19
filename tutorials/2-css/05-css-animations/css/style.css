@@ -1,0 +1,113 @@
+body {
+    animation: change-color 10s infinite alternate;
+}
+
+@keyframes change-color {
+    0% {
+        background-color: cornsilk;
+    }
+
+    50% {
+        background-color: blueviolet;
+    }
+
+    100% {
+        background-color: darkturquoise;
+    }
+}
+
+.title {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    text-align: center;
+    margin: 80px auto;
+    animation: skew 3s infinite alternate;
+}
+
+@keyframes skew {
+    0% {
+        transform: skew(0deg, 0deg);
+    }
+
+    100% {
+        transform: skew(10deg, 15deg);
+    }
+}
+
+.square {
+    background-color: crimson;
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+    margin: 50px auto;
+    transition: all 1s;
+}
+
+.square:hover {
+    background-color: gold;
+    transform: rotate(30deg);
+}
+
+.button-div {
+    text-align: center;
+}
+
+.button {
+    color: black;
+    background-color: darksalmon;
+    padding: 15px;
+    border-radius: 10px;
+    text-decoration: none;
+    display: inline-block;
+    transition: .5s;
+}
+
+.button:hover {
+    background-color: dodgerblue;
+    color: black;
+    transform: scale(1.5);
+}
+
+.loading {
+    background-color: deeppink;
+    animation: stretch 5s infinite alternate;
+    width: 100vw;
+}
+
+@keyframes stretch {
+    0% {
+        width: 100px;
+    }
+
+    100% {
+        width: 100vw;
+    }
+}
+
+.rect {
+    background-color: chocolate;
+    width: 500px;
+    height: 150px;
+    border-radius: 20px;
+    margin: 200px auto;
+    transition: all 1s;
+}
+
+.rect:hover {
+    transform:scale(.5);
+    transform: rotate(180deg);
+    background-color: darkblue;
+}
+
+.circle {
+    background-color: firebrick;
+    width: 100px;
+    height: 100px;
+    border-radius: 100px;
+    margin: 90px auto;
+    animation: translate 2s infinite alternate;
+}
+
+@keyframes translate {
+    0% {transform: translate(-1000px, 100px);}
+    100% {transform: translate(800px, -100px);}
+}
