@@ -1,0 +1,19 @@
+
+.waving-lizard {
+    position: absolute;
+    top: 10px;
+    left: 30px;
+}
+
+.more-lizards-div {
+    position: relative;
+    margin: 50px auto;
+    max-width: 600px;
+    font-size: 3rem;
+}
+
+.screaming-lizard {
+    position: absolute;
+    top: 40px;
+    left: 50px;
+}
