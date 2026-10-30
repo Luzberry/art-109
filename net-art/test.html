@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #container {
+            background-color: #f0f8ff;
+            text-align: center;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container" style="display: none;">
+        <h2>Access Granted!</h2>
+        <h3>Welcome to TutorialsPoint Protected Content</h3>
+        <p>This content is now visible after successful authentication.</p>
+    </div>
+    <div>
+        <a href="index.html"><p>return...</p></a>
+    </div>
+    
+    <script>
+        let password = "tutorial123";
+        
+        (function passcodeprotect() {
+            let passcode = prompt("Enter Password to Access Protected Content:");
+            
+            while (passcode !== password) {
+                if (passcode === null) {
+                    // User clicked Cancel
+                    alert("Access denied. Page will not load.");
+                    return;
+                }
+                alert("Incorrect Password! Please try again.");
+                passcode = prompt("Enter Password to Access Protected Content:");
+            }
+            
+            alert("Access Granted! Welcome!");
+            document.getElementById("container").style.display = "block";
+        })();
+    </script>
+</body>
+</html>

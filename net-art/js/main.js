@@ -1,0 +1,1 @@
+// myinput.onchange = function() {if (myinput.value == "mypassword") {doSomething();}}
