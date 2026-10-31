@@ -1,6 +1,6 @@
 :root {
-    --bg-color-1: #262626FF;
-    --bg-color-2: #E5DBECFF;
+    --bg-color-1: rgb(15, 9, 14);
+    --bg-color-2: rgba(15, 9, 14, 0);
     --font-1: #f9f1ff;
     --font-2: #f3f0e7;
     --accent-1: #9D69A3;
@@ -8,3 +8,33 @@
     --dark: #470047;
 }
 
+body {
+    background-color: var(--bg-color-1);
+    color: var(--font-1);
+    text-align: center;
+    font-size: 3rem;
+}
+
+.intro-content p {
+    color: var(--font-1);
+    border-radius: 20px;
+    font-size: 1rem;
+    text-align: left;
+}
+
+.rect {
+    position: absolute;
+    background-color: var(--bg-color-1);
+    width: 78.5rem;
+    height: 32rem;;
+    margin: 150rem 20rem auto;
+    transition: all .9s ease;
+}
+
+.rect:hover {
+    background-color: var(--bg-color-2);
+}
+
+.intro-content img {
+    margin: 150rem auto
+}
