@@ -1,5 +1,5 @@
 :root {
-    --bg-color-1: rgb(15, 9, 14);
+    --bg-color-1: rgb(5, 3, 5);
     --bg-color-2: rgba(15, 9, 14, 0);
     --font-1: #f9f1ff;
     --font-2: #f3f0e7;
@@ -15,6 +15,15 @@ body {
     font-size: 3rem;
 }
 
+.container {
+    background-color: #f0f8ff;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 500px;
+}
+
 .intro-content p {
     color: var(--font-1);
     border-radius: 20px;
@@ -25,9 +34,10 @@ body {
 .rect {
     position: absolute;
     background-color: var(--bg-color-1);
-    width: 78.5rem;
-    height: 32rem;;
-    margin: 150rem 20rem auto;
+    width: 120rem;
+    height: 32rem;
+    ;
+    margin: 150rem auto;
     transition: all .9s ease;
 }
 
@@ -37,4 +47,8 @@ body {
 
 .intro-content img {
     margin: 150rem auto
+}
+
+.puzzle2-content img {
+    margin: 50rem 100rem 75rem 200rem;
 }
