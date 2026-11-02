@@ -2,12 +2,8 @@
     --bg-color-1: rgb(5, 3, 5);
     --bg-color-2: rgba(15, 9, 14, 0);
     --bg-color-3: rgb(15, 9, 14);
-
     --font-1: #f9f1ff;
-    --font-2: #f3f0e7;
-    --accent-1: #9D69A3;
-    --accent-2: #ffd6be;
-    --dark: #470047;
+
 }
 
 body {
@@ -56,7 +52,6 @@ body {
 }
 
 .puzzle3 {
-    /* color: black; */
     background-color: var(--bg-color-3);
     padding: 5px;
     border-radius: 10px;
