@@ -1,18 +1,19 @@
-        let password = "tutorial123";
+        let password = "286";
         
         (function passcodeprotect() {
-            let passcode = prompt("Enter Password to Access Protected Content:");
+            let passcode = prompt("enter password to access protected content:");
             
             while (passcode !== password) {
                 if (passcode === null) {
                     // User clicked Cancel
-                    alert("Access denied. Page will not load.");
+                    alert("Access Denied.");
                     return;
                 }
-                alert("Incorrect Password! Please try again.");
-                passcode = prompt("Enter Password to Access Protected Content:");
+                alert("find the code");
+                passcode = prompt("enter password:");
             }
             
-            alert("Access Granted! Welcome!");
+            alert("Access Granted");
             document.getElementById("container").style.display = "block";
         })();
+

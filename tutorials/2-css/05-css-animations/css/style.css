@@ -53,12 +53,19 @@ body {
 
 .button {
     color: black;
-    background-color: darksalmon;
+    /* background-color: darksalmon; */
     padding: 15px;
     border-radius: 10px;
     text-decoration: none;
     display: inline-block;
     transition: .5s;
+    animation: translate 2s infinite alternate-reverse;
+
+}
+
+@keyframes translate {
+    0% {transform: translate(-1000px, 100px);}
+    100% {transform: translate(800px, -100px);}
 }
 
 .button:hover {
