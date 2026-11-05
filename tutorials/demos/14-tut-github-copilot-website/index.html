@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17130f">
+  <meta name="description" content="Defend your medieval keep in a turn-based dragon adventure.">
+  <title>The Ember Crown — A Medieval Dragon Adventure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Crimson+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Keep presentation and game behavior in their own folders. -->
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/game.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="The Ember Crown home">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>EMBER<span class="brand-light">KEEP</span></span>
+      </a>
+      <div class="season-label"><span class="status-dot"></span> THE ASHEN REIGN <span class="season-divider">/</span> YEAR 07</div>
+      <button class="sound-button" id="sound-toggle" type="button" aria-pressed="false" aria-label="Turn sound effects on">♫ <span>Sound off</span></button>
+    </header>
+
+    <main>
+      <!-- Title and saved high score introduce the current campaign. -->
+      <section class="intro" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">A tale from the old kingdom</p>
+          <h1 id="page-title">The Ember <span>Crown.</span></h1>
+          <p class="intro-copy">A royal champion rides for your keep. Let the dragon answer.</p>
+        </div>
+        <div class="best-run">
+          <span class="best-icon" aria-hidden="true">♛</span>
+          <span><small>HALL OF HONOR</small><strong id="best-run">No victory yet</strong></span>
+        </div>
+      </section>
+
+      <section class="game-layout" aria-label="Dragon game">
+        <div class="game-column">
+          <!-- Decorative keep scene, dragon/enemy sprites, and start/end overlay. -->
+          <section class="arena" aria-label="The dragon's castle keep">
+            <div class="arena-sky"></div>
+            <div class="moon" aria-hidden="true"></div>
+            <div class="star star-one" aria-hidden="true">✦</div>
+            <div class="star star-two" aria-hidden="true">·</div>
+            <div class="star star-three" aria-hidden="true">✧</div>
+            <div class="mountain mountain-back" aria-hidden="true"></div>
+            <div class="mountain mountain-front" aria-hidden="true"></div>
+            <div class="arena-ground" aria-hidden="true"></div>
+
+            <div class="wave-pill"><span class="wave-dot"></span><span id="wave-label">THE KEEP IS QUIET</span></div>
+            <div class="dragon-stage" id="dragon-stage">
+              <span class="dragon-glow" aria-hidden="true"></span>
+              <span class="dragon-emoji" id="dragon" role="img" aria-label="Your dragon">🐉</span>
+              <span class="dragon-shadow" aria-hidden="true"></span>
+              <span class="damage-float" id="damage-float" aria-hidden="true"></span>
+            </div>
+            <div class="enemy-stage" id="enemy-stage" aria-hidden="true">
+              <span class="enemy-emoji" id="enemy">🛡️</span>
+              <span class="enemy-shadow"></span>
+              <span class="damage-float enemy-damage" id="enemy-damage"></span>
+            </div>
+            <div class="arena-caption">
+              <span class="caption-name">THE HIGH KEEP</span>
+              <span class="caption-line"></span>
+              <span class="caption-name" id="enemy-name">NO THREATS</span>
+            </div>
+            <div class="arena-overlay" id="arena-overlay">
+              <div class="overlay-card">
+                <span class="overlay-icon" aria-hidden="true">♨</span>
+                <p class="eyebrow">The gates are under siege</p>
+                <h2 id="overlay-title">Something stirs<br>below the clouds.</h2>
+                <p id="overlay-copy">A brave knight seeks your crown. Let them learn why dragons rule this keep.</p>
+                <button class="primary-button" id="start-button" type="button">Rally the dragon <span aria-hidden="true">↗</span></button>
+              </div>
+            </div>
+          </section>
+
+          <!-- JavaScript updates these meters and action buttons as the game progresses. -->
+          <section class="vitals" aria-label="Dragon status">
+            <div class="vital health-vital">
+              <div class="vital-top"><span><span class="vital-icon">♥</span> DRAGON VIGOR</span><strong id="health-value">100 <small>/ 100</small></strong></div>
+              <div class="meter"><span class="meter-fill health-fill" id="health-fill"></span></div>
+            </div>
+            <div class="vital focus-vital">
+              <div class="vital-top"><span><span class="vital-icon focus-icon">✦</span> FLAME</span><strong id="focus-value">3 <small>/ 5</small></strong></div>
+              <div class="focus-pips" id="focus-pips" aria-label="3 of 5 focus"></div>
+            </div>
+            <div class="vital hoard-vital">
+              <span class="vital-icon hoard-icon">◈</span>
+              <span class="hoard-copy"><small>ROYAL TREASURE</small><strong id="hoard-value">0 <small>gold</small></strong></span>
+            </div>
+          </section>
+
+          <!-- Each action's data-action value maps to a move handled by game.js. -->
+          <section class="actions-section" aria-labelledby="actions-title">
+            <div class="section-heading">
+              <div><p class="eyebrow">The battle awaits</p><h2 id="actions-title">Choose your action</h2></div>
+              <span class="turn-label" id="turn-label">WAITING TO PLAY</span>
+            </div>
+            <div class="action-grid">
+              <button class="action-card action-fire" type="button" data-action="fire" disabled>
+                <span class="action-icon">♨</span>
+                <span class="action-content"><strong>Dragonfire</strong><small>Deal 30 damage</small></span>
+                <span class="action-cost"><span>✦</span> 2</span>
+              </button>
+              <button class="action-card action-claw" type="button" data-action="claw" disabled>
+                <span class="action-icon">⚔</span>
+                <span class="action-content"><strong>Claw swipe</strong><small>Deal 15 damage</small></span>
+                <span class="action-cost free-cost">FREE</span>
+              </button>
+              <button class="action-card action-forage" type="button" data-action="forage" disabled>
+                <span class="action-icon">◈</span>
+                <span class="action-content"><strong>Ransack the hoard</strong><small>+2 flame · heal 8</small></span>
+                <span class="action-cost free-cost">FREE</span>
+              </button>
+              <button class="action-card action-guard" type="button" data-action="guard" disabled>
+                <span class="action-icon">⛨</span>
+                <span class="action-content"><strong>Guard the keep</strong><small>Block next attack</small></span>
+                <span class="action-cost free-cost">FREE</span>
+              </button>
+            </div>
+            <p class="action-hint" id="action-hint">The gates hold—for now. Begin when you are ready.</p>
+          </section>
+        </div>
+
+        <!-- Campaign objectives, recent battle events, and contextual hints. -->
+        <aside class="side-column" aria-label="Adventure details">
+          <section class="side-card objective-card">
+            <div class="card-heading"><span class="card-icon">⌖</span><p class="eyebrow">Royal decree</p></div>
+            <h2>Keep the crown.</h2>
+            <p>Turn back three assaults before the crown falls to the kingdom's champions.</p>
+            <div class="quest-progress" aria-label="Quest progress">
+              <span class="quest-step current" id="quest-step-1"><span>01</span><i></i></span>
+              <span class="quest-step" id="quest-step-2"><span>02</span><i></i></span>
+              <span class="quest-step" id="quest-step-3"><span>03</span><i></i></span>
+            </div>
+            <div class="quest-labels"><span>Scout</span><span>Vanguard</span><span>Champion</span></div>
+          </section>
+
+          <section class="side-card log-card">
+            <div class="log-heading"><div><p class="eyebrow">Field notes</p><h2>Adventure log</h2></div><span class="log-live" id="log-live">READY</span></div>
+            <ol class="log-list" id="log-list" aria-live="polite" aria-relevant="additions">
+              <li class="log-entry log-muted"><span class="log-marker">·</span><span>A horn sounds beyond the castle walls...</span></li>
+            </ol>
+          </section>
+
+          <section class="tip-card">
+            <span class="tip-spark" aria-hidden="true">✦</span>
+            <p class="eyebrow">Words of the wise</p>
+            <p id="tip-copy">A well-fed dragon is a fearsome guardian. Ransack your hoard to heal and rekindle your flame.</p>
+          </section>
+          <button class="reset-button" id="reset-button" type="button" hidden>↻ &nbsp; Begin a new campaign</button>
+        </aside>
+      </section>
+    </main>
+    <footer><span>BY ROYAL DECREE · ESTABLISHED IN THE ASHEN AGE</span><span>DRAGONS KEEP THEIR OWN COUNSEL <b>♥</b></span></footer>
+  </div>
+</body>
+</html>

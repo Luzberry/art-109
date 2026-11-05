@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#10120f">
+    <title>Goodside — your daily feed</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+            --page: #10120f;
+            --surface: #181a17;
+            --surface-raised: #1e211d;
+            --line: #2a2d28;
+            --text: #f0f1eb;
+            --muted: #92958b;
+            --lime: #d3f36b;
+            --coral: #ff806b;
+            --serif: Georgia, "Times New Roman", serif;
+            font-family: "DM Sans", sans-serif;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        body { margin: 0; min-width: 320px; background: var(--page); color: var(--text); }
+        button, input, textarea { color: inherit; font: inherit; }
+        button { cursor: pointer; }
+        button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+        a { color: inherit; text-decoration: none; }
+        .app { display: grid; grid-template-columns: 220px minmax(0, 620px) 290px; gap: 48px; width: min(1280px, calc(100% - 64px)); margin: 0 auto; }
+
+        .sidebar { position: sticky; top: 0; display: flex; height: 100vh; flex-direction: column; padding: 34px 0 24px; }
+        .brand { display: flex; align-items: center; gap: 11px; margin: 0 0 48px 4px; font: 700 25px/1 "Space Grotesk", sans-serif; letter-spacing: 0; }
+        .brand-mark { display: grid; width: 31px; height: 31px; place-items: center; border-radius: 10px 10px 10px 3px; background: var(--lime); color: #141610; font-size: 19px; transform: rotate(-7deg); }
+        .nav-label { margin: 0 0 12px 12px; color: #666b61; font-size: 10px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; }
+        .nav-list { display: grid; gap: 5px; }
+        .nav-item { display: flex; align-items: center; gap: 14px; min-height: 46px; padding: 0 13px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); text-align: left; transition: background .2s, color .2s; }
+        .nav-item:hover, .nav-item.active { background: var(--surface-raised); color: var(--text); }
+        .nav-item.active .nav-icon { color: var(--lime); }
+        .nav-icon { width: 20px; color: #a4a79e; font-size: 18px; text-align: center; }
+        .nav-item span:last-child { font-size: 14px; font-weight: 600; }
+        .sidebar-bottom { margin-top: auto; }
+        .profile-mini { display: flex; align-items: center; gap: 11px; padding: 13px 10px; border-top: 1px solid var(--line); }
+        .profile-copy { min-width: 0; flex: 1; }
+        .profile-copy strong, .profile-copy span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .profile-copy strong { font-size: 13px; }
+        .profile-copy span { margin-top: 2px; color: var(--muted); font-size: 11px; }
+
+        .feed { min-width: 0; padding: 34px 0 70px; }
+        .feed-heading { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 23px; }
+        .eyebrow { margin: 0 0 6px; color: var(--lime); font-size: 11px; font-weight: 700; letter-spacing: 1.25px; text-transform: uppercase; }
+        h1, h2, h3, p { margin-top: 0; }
+        .feed-heading h1 { margin-bottom: 0; font: 600 30px/1.1 "Space Grotesk", sans-serif; letter-spacing: 0; }
+        .date-label { color: var(--muted); font-size: 12px; }
+        .icon-button { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--muted); font-size: 17px; transition: color .2s, border-color .2s, background .2s; }
+        .icon-button:hover { border-color: #4a4e43; background: var(--surface-raised); color: var(--text); }
+
+        .stories { display: flex; gap: 19px; overflow-x: auto; padding: 2px 0 22px; scrollbar-width: none; }
+        .stories::-webkit-scrollbar { display: none; }
+        .story { display: grid; min-width: 54px; justify-items: center; gap: 7px; padding: 0; border: 0; background: none; color: var(--muted); font-size: 10px; }
+        .story-ring { display: grid; width: 54px; height: 54px; padding: 3px; place-items: center; border: 1.5px solid var(--lime); border-radius: 50%; }
+        .story:first-child .story-ring { border-style: dashed; color: var(--lime); font-size: 22px; }
+        .story-name { max-width: 62px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .avatar { display: block; width: 38px; height: 38px; flex: 0 0 auto; border-radius: 50%; object-fit: cover; background: #373a31; }
+        .story .avatar { width: 100%; height: 100%; border: 2px solid var(--page); }
+
+        .composer { margin-bottom: 20px; padding: 17px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); }
+        .composer-top { display: flex; align-items: center; gap: 12px; }
+        .composer textarea { width: 100%; min-height: 40px; resize: vertical; border: 0; background: transparent; color: var(--text); font-size: 13px; line-height: 1.5; }
+        .composer textarea::placeholder { color: #777b70; }
+        .composer textarea:focus { outline: none; }
+        .composer-actions { display: flex; justify-content: space-between; align-items: center; margin: 13px 0 0 50px; padding-top: 12px; border-top: 1px solid var(--line); }
+        .composer-tools { display: flex; gap: 7px; }
+        .tool-button { padding: 7px 9px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 11px; }
+        .tool-button:hover { background: var(--surface-raised); color: var(--lime); }
+        .post-button { padding: 8px 17px; border: 0; border-radius: 6px; background: var(--lime); color: #15170f; font-size: 12px; font-weight: 700; transition: transform .18s, background .18s; }
+        .post-button:hover { background: #e0ff83; transform: translateY(-1px); }
+
+        .feed-controls { display: flex; align-items: center; justify-content: space-between; margin: 26px 0 12px; }
+        .feed-controls h2 { margin: 0; font: 600 16px "Space Grotesk", sans-serif; letter-spacing: 0; }
+        .sort-select { border: 0; background: var(--page); color: var(--muted); font-size: 11px; }
+        .post { margin-top: 12px; overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); animation: rise-in .45s both; }
+        .post-header { display: flex; align-items: center; gap: 10px; padding: 16px 17px 12px; }
+        .post-author { min-width: 0; flex: 1; }
+        .post-author strong { display: inline-block; font-size: 12px; }
+        .verified { margin-left: 4px; color: var(--lime); font-size: 10px; }
+        .post-author span { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+        .more-button { border: 0; background: transparent; color: var(--muted); font-size: 20px; }
+        .post-copy { padding: 0 17px 14px; color: #d5d7cf; font-size: 12px; line-height: 1.65; }
+        .post-copy p { margin: 0; }
+        .tag { color: var(--lime); }
+        .post-image { display: block; width: 100%; max-height: 370px; aspect-ratio: 1.55; object-fit: cover; background: #262922; }
+        .post-image.portrait { aspect-ratio: 1.8; }
+        .post-media { position: relative; overflow: hidden; isolation: isolate; }
+        .media-placeholder { display: grid; place-items: center; overflow: hidden; background: radial-gradient(ellipse at 75% 15%, #4b5934 0, transparent 43%), linear-gradient(145deg, #292d25, #191c18 72%); color: var(--text); text-align: center; }
+        .placeholder-content { display: grid; justify-items: center; gap: 7px; padding: 18px; }
+        .placeholder-icon { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid #626c4c; border-radius: 50%; color: var(--lime); font-size: 19px; }
+        .placeholder-content strong { font-size: 12px; }
+        .placeholder-content span:last-child { color: #a4a89a; font-size: 10px; }
+        .post-stats { display: flex; justify-content: space-between; padding: 13px 17px 9px; color: var(--muted); font-size: 10px; }
+        .post-actions { position: absolute; z-index: 2; right: 0; bottom: 0; left: 0; display: flex; gap: 5px; padding: 30px 12px 10px; background: linear-gradient(transparent, rgba(0, 0, 0, .72)); }
+        .action-button { display: flex; align-items: center; gap: 7px; padding: 8px; border: 0; border-radius: 6px; background: transparent; color: #fff; font-size: 11px; filter: drop-shadow(0 1px 3px #000); transition: color .18s, background .18s, transform .18s; }
+        .action-button:hover { background: rgba(0, 0, 0, .38); color: var(--text); transform: translateY(-2px); }
+        .action-button.liked { color: var(--coral); }
+        .action-button.saved { color: var(--lime); }
+        .action-button .action-icon { font-size: 15px; }
+        .action-button.like-button .action-icon { font-size: 18px; }
+        .action-spacer { flex: 1; }
+        .heart-particle { position: absolute; z-index: 4; pointer-events: none; font-size: var(--heart-size, 18px); line-height: 1; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .5)); animation: heart-float .95s cubic-bezier(.12,.72,.25,1) var(--heart-delay, 0ms) both; }
+
+        .right-rail { position: sticky; top: 0; align-self: start; padding: 34px 0 24px; }
+        .search { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--muted); }
+        .search span { font-size: 17px; }
+        .search input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 11px; }
+        .search input::placeholder { color: #777b70; }
+        .rail-section { margin-top: 31px; }
+        .rail-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+        .rail-title h2 { margin: 0; font: 600 15px "Space Grotesk", sans-serif; letter-spacing: 0; }
+        .rail-title button { border: 0; background: transparent; color: var(--lime); font-size: 10px; }
+        .trend { padding: 12px 0; border-top: 1px solid var(--line); }
+        .trend small { color: var(--muted); font-size: 10px; }
+        .trend strong { display: block; margin: 5px 0 4px; font-size: 12px; }
+        .trend span { color: var(--muted); font-size: 10px; }
+        .suggestion { display: flex; align-items: center; gap: 9px; padding: 9px 0; }
+        .suggestion .avatar { width: 34px; height: 34px; }
+        .suggestion-copy { min-width: 0; flex: 1; }
+        .suggestion-copy strong { display: block; overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+        .suggestion-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; }
+        .follow { padding: 6px 9px; border: 1px solid #44483e; border-radius: 5px; background: transparent; color: var(--lime); font-size: 10px; }
+        .follow:hover, .follow.following { border-color: var(--lime); background: var(--lime); color: #15170f; }
+        .rail-footer { margin-top: 37px; color: #676b62; font-size: 9px; line-height: 1.9; }
+        .rail-footer a { margin-right: 9px; }
+        .empty-state { padding: 40px 16px; color: var(--muted); text-align: center; font-size: 13px; }
+
+        @keyframes rise-in { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes heart-float {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.2) rotate(0); }
+            12% { opacity: 1; transform: translate(-50%, -50%) scale(1.15) rotate(var(--heart-turn)); }
+            100% { opacity: 0; transform: translate(calc(-50% + var(--heart-drift-x)), calc(-50% + var(--heart-drift-y))) scale(.55) rotate(calc(var(--heart-turn) * 2)); }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+        /* Collapse side columns as the viewport narrows, then move navigation to the bottom. */
+        @media (max-width: 1280px) {
+            .app { grid-template-columns: 190px minmax(0, 1fr) 260px; gap: 28px; width: calc(100% - 56px); }
+        }
+        @media (max-width: 980px) {
+            .app { grid-template-columns: 180px minmax(0, 1fr); gap: 28px; width: min(900px, calc(100% - 48px)); }
+            .right-rail { display: none; }
+        }
+        @media (max-width: 680px) {
+            .app { display: block; width: 100%; }
+            .sidebar { position: fixed; z-index: 5; inset: auto 0 0; display: block; width: 100%; height: auto; padding: 0; border-top: 1px solid var(--line); background: rgba(16, 18, 15, .96); backdrop-filter: blur(14px); }
+            .brand, .nav-label, .sidebar-bottom { display: none; }
+            .nav-list { display: flex; justify-content: space-around; gap: 0; padding: 5px 8px max(5px, env(safe-area-inset-bottom)); }
+            .nav-item { display: grid; min-width: 52px; min-height: 49px; justify-items: center; gap: 0; padding: 4px; border-radius: 7px; }
+            .nav-icon { font-size: 18px; }
+            .nav-item span:last-child { font-size: 9px; }
+            .feed { padding: 24px 16px 92px; }
+            .feed-heading { margin-bottom: 18px; }
+            .feed-heading h1 { font-size: 27px; }
+            .date-label { display: block; margin-top: 8px; font-size: 10px; }
+            .stories { gap: 14px; margin-right: -16px; padding-bottom: 18px; }
+            .composer { padding: 14px; }
+            .composer-actions { margin-left: 0; }
+            .post-image { max-height: 330px; }
+        }
+        @media (max-width: 380px) {
+            .feed { padding-right: 12px; padding-left: 12px; }
+            .stories { margin-right: -12px; }
+            .feed-heading h1 { font-size: 24px; }
+            .composer-tools { gap: 0; }
+            .tool-button { padding-right: 6px; padding-left: 6px; }
+            .action-button { gap: 5px; padding-right: 6px; padding-left: 6px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" aria-label="Main navigation">
+            <a class="brand" href="#top" aria-label="Goodside home"><span class="brand-mark">g</span>goodside</a>
+            <p class="nav-label">Your space</p>
+            <nav class="nav-list">
+                <button class="nav-item active" data-view="For you"><span class="nav-icon">⌂</span><span>For you</span></button>
+                <button class="nav-item" data-view="Discover"><span class="nav-icon">⌕</span><span>Discover</span></button>
+                <button class="nav-item" data-view="Messages"><span class="nav-icon">◌</span><span>Messages</span></button>
+                <button class="nav-item" data-view="Saved"><span class="nav-icon">♧</span><span>Saved</span></button>
+                <button class="nav-item" data-view="Notifications"><span class="nav-icon">♧</span><span>Activity <span style="color:var(--coral)">·</span></span></button>
+            </nav>
+            <div class="sidebar-bottom">
+                <p class="nav-label">Your account</p>
+                <div class="profile-mini">
+                    <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="">
+                    <div class="profile-copy"><strong>Jamie Rivera</strong><span>@jamierivera</span></div>
+                    <button class="more-button" aria-label="Account options">···</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="feed" id="top">
+            <header class="feed-heading">
+                <div><p class="eyebrow">Wednesday, November 4</p><h1>Good morning, Jamie<span style="color:var(--lime)">.</span></h1></div>
+                <span class="date-label">Your corner of the internet</span>
+            </header>
+
+            <section class="stories" aria-label="Stories">
+                <button class="story" aria-label="Add to your story"><span class="story-ring">+</span><span class="story-name">Your story</span></button>
+                <button class="story"><span class="story-ring"><img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt=""></span><span class="story-name">marcus</span></button>
+                <button class="story"><span class="story-ring"><img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt=""></span><span class="story-name">alina.draws</span></button>
+                <button class="story"><span class="story-ring"><img class="avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt=""></span><span class="story-name">noah.k</span></button>
+                <button class="story"><span class="story-ring"><img class="avatar" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&q=80" alt=""></span><span class="story-name">sophia</span></button>
+                <button class="story"><span class="story-ring"><img class="avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt=""></span><span class="story-name">devonlee</span></button>
+            </section>
+
+            <form class="composer" id="composer">
+                <div class="composer-top">
+                    <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="">
+                    <textarea id="post-input" rows="1" placeholder="What’s on your mind, Jamie?" aria-label="Write a post"></textarea>
+                </div>
+                <div class="composer-actions">
+                    <div class="composer-tools"><button class="tool-button" type="button" title="Add a photo">▧ &nbsp;Photo</button><button class="tool-button" type="button" title="Add a feeling">☺ &nbsp;Feeling</button></div>
+                    <button class="post-button" type="submit">Post</button>
+                </div>
+            </form>
+
+            <div class="feed-controls"><h2 id="feed-title">Your feed</h2><select class="sort-select" aria-label="Sort feed"><option>Recent</option><option>Popular</option></select></div>
+
+            <section id="posts" aria-label="Posts">
+                <article class="post" data-saved="false">
+                    <header class="post-header">
+                        <img class="avatar" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="">
+                        <div class="post-author"><strong>Marcus Chen</strong><span class="verified" aria-label="Verified">✳</span><span>@marcusmakes · 24 min</span></div>
+                        <button class="more-button" aria-label="More post options">···</button>
+                    </header>
+                    <div class="post-copy"><p>🌃🚶🌿✨</p></div>
+                    <img class="post-image" src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1200&q=85" alt="Soft evening light over a quiet city street">
+                    <div class="post-stats"><span><span class="like-count">248</span> ❤️</span><span>32 💬 · 8 ↗️</span></div>
+                    <div class="post-actions"><button class="action-button like-button" aria-label="Like post" aria-pressed="false"><span class="action-icon">🤍</span></button><button class="action-button comment-button" aria-label="Reply"><span class="action-icon">💬</span></button><button class="action-button" aria-label="Share"><span class="action-icon">📤</span></button><span class="action-spacer"></span><button class="action-button save-button" aria-label="Save post"><span class="action-icon">🔖</span></button></div>
+                </article>
+
+                <article class="post" data-saved="false">
+                    <header class="post-header">
+                        <img class="avatar" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=100&q=80" alt="">
+                        <div class="post-author"><strong>Sophia Ellis</strong><span class="verified" aria-label="Verified">✳</span><span>@sophia.ellis · 1 hr</span></div>
+                        <button class="more-button" aria-label="More post options">···</button>
+                    </header>
+                    <div class="post-copy"><p>☀️📓🌱🧘</p></div>
+                    <img class="post-image portrait" src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1200&q=85" alt="Golden sunrise spreading across a quiet open field">
+                    <div class="post-stats"><span><span class="like-count">186</span> ❤️</span><span>18 💬 · 5 ↗️</span></div>
+                    <div class="post-actions"><button class="action-button like-button" aria-label="Like post" aria-pressed="false"><span class="action-icon">🤍</span></button><button class="action-button comment-button" aria-label="Reply"><span class="action-icon">💬</span></button><button class="action-button" aria-label="Share"><span class="action-icon">📤</span></button><span class="action-spacer"></span><button class="action-button save-button" aria-label="Save post"><span class="action-icon">🔖</span></button></div>
+                </article>
+
+                <article class="post" data-saved="false">
+                    <header class="post-header">
+                        <img class="avatar" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=100&q=80" alt="">
+                        <div class="post-author"><strong>Noah Kim</strong><span>@noahk · 3 hrs</span></div>
+                        <button class="more-button" aria-label="More post options">···</button>
+                    </header>
+                    <div class="post-copy"><p>😱🦖💥</p></div>
+                    <img class="post-image" src="images/Scream-GIF.gif" alt="😱🦖">
+                    <div class="post-stats"><span><span class="like-count">94</span> ❤️</span><span>11 💬 · 3 ↗️</span></div>
+                    <div class="post-actions"><button class="action-button like-button" aria-label="Like post" aria-pressed="false"><span class="action-icon">🤍</span></button><button class="action-button comment-button" aria-label="Reply"><span class="action-icon">💬</span></button><button class="action-button" aria-label="Share"><span class="action-icon">📤</span></button><span class="action-spacer"></span><button class="action-button save-button" aria-label="Save post"><span class="action-icon">🔖</span></button></div>
+                </article>
+            </section>
+        </main>
+
+        <aside class="right-rail" aria-label="Explore">
+            <label class="search"><span>⌕</span><input id="search-input" type="search" placeholder="Search people, topics..." aria-label="Search posts"></label>
+            <section class="rail-section">
+                <div class="rail-title"><h2>Making waves</h2><button type="button">See all</button></div>
+                <div class="trend"><small>Design · Trending</small><strong>#slowmade</strong><span>2.4k posts this week</span></div>
+                <div class="trend"><small>Photography · Popular</small><strong>#quietcorners</strong><span>1.8k posts this week</span></div>
+                <div class="trend"><small>Community · On the rise</small><strong>#littlejoys</strong><span>946 posts this week</span></div>
+            </section>
+            <section class="rail-section">
+                <div class="rail-title"><h2>People to know</h2><button type="button">Refresh</button></div>
+                <div class="suggestion"><img class="avatar" src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=100&q=80" alt=""><div class="suggestion-copy"><strong>Alina Brooks</strong><span>Illustrator · 8 mutuals</span></div><button class="follow">Follow</button></div>
+                <div class="suggestion"><img class="avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt=""><div class="suggestion-copy"><strong>Devon Lee</strong><span>Photographer · 3 mutuals</span></div><button class="follow">Follow</button></div>
+                <div class="suggestion"><img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt=""><div class="suggestion-copy"><strong>Maya Patel</strong><span>Maker · 5 mutuals</span></div><button class="follow">Follow</button></div>
+            </section>
+            <footer class="rail-footer"><a href="#about">About</a><a href="#guidelines">Guidelines</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a><br>© 2026 Goodside Social</footer>
+        </aside>
+    </div>
+
+    <script>
+        const postList = document.querySelector("#posts");
+        const feedTitle = document.querySelector("#feed-title");
+        let commonWords = null;
+        // Browsers block CSV fetches from file:// pages; the fallback then permits emoji-only posts.
+        const commonWordsReady = fetch("4000-most-common-english-words.csv")
+            .then((response) => {
+                if (!response.ok) throw new Error("Word list could not be loaded.");
+                return response.text();
+            })
+            .then((text) => {
+                commonWords = new Set(text.split(/\r?\n/).slice(1).map((word) => word.trim().toLowerCase()).filter(Boolean));
+            })
+            .catch(() => {});
+
+        async function containsBlockedWord(text) {
+            await commonWordsReady;
+            if (!commonWords) return /\p{L}/u.test(text);
+
+            // Match whole terms while keeping common hyphenated and slashed entries intact.
+            const tokens = text.match(/[\p{L}\p{N}]+(?:[-'’/][\p{L}\p{N}]+)*/gu) || [];
+            return tokens.some((token) => commonWords.has(token.toLowerCase()));
+        }
+
+        // Group the media and its action row so the controls can overlay the image.
+        function positionPostActions(post) {
+            const media = post.querySelector(".post-image");
+            const actions = post.querySelector(".post-actions");
+            if (!media || !actions || media.parentElement.classList.contains("post-media")) return;
+
+            const frame = document.createElement("div");
+            frame.className = "post-media";
+            media.before(frame);
+            frame.append(media, actions);
+        }
+
+        document.querySelectorAll(".post").forEach(positionPostActions);
+
+        document.querySelectorAll(".post-image:not(.media-placeholder)").forEach((image) => {
+            image.addEventListener("error", () => {
+                const placeholder = document.createElement("div");
+                placeholder.className = "post-image media-placeholder";
+                placeholder.setAttribute("role", "img");
+                placeholder.setAttribute("aria-label", `Image unavailable. ${image.alt || "Replace with a post photo."}`);
+                placeholder.innerHTML = '<div class="placeholder-content"><span class="placeholder-icon">▧</span><strong>Image unavailable</strong><span>Replace this image URL with your own photo</span></div>';
+                image.replaceWith(placeholder);
+            });
+        });
+
+        // Scatter particles radially from the center of the post media.
+        function burstHearts(media) {
+            const mediaBounds = media.getBoundingClientRect();
+            const heartIcons = ["❤️", "💖", "💕", "💗", "💘"];
+
+            for (let index = 0; index < 24; index += 1) {
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 55 + Math.random() * 105;
+                const heart = document.createElement("span");
+                heart.className = "heart-particle";
+                heart.textContent = heartIcons[index % heartIcons.length];
+                heart.setAttribute("aria-hidden", "true");
+                heart.style.left = `${mediaBounds.width / 2}px`;
+                heart.style.top = `${mediaBounds.height / 2}px`;
+                heart.style.setProperty("--heart-drift-x", `${Math.round(Math.cos(angle) * distance)}px`);
+                heart.style.setProperty("--heart-drift-y", `${Math.round(Math.sin(angle) * distance)}px`);
+                heart.style.setProperty("--heart-turn", `${Math.round(Math.random() * 50 - 25)}deg`);
+                heart.style.setProperty("--heart-size", `${14 + Math.round(Math.random() * 11)}px`);
+                heart.style.setProperty("--heart-delay", `${index % 4 * 16}ms`);
+                heart.addEventListener("animationend", () => heart.remove(), { once: true });
+                media.append(heart);
+            }
+        }
+
+        document.querySelector("#composer").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const input = document.querySelector("#post-input");
+            const message = input.value.trim();
+            if (!message) {
+                input.focus();
+                return;
+            }
+            if (await containsBlockedWord(message)) {
+                window.alert(commonWords ? "Please remove common words from your post." : "The word list is unavailable here. Posts can contain emoji only.");
+                return;
+            }
+            const post = document.createElement("article");
+            post.className = "post";
+            post.dataset.saved = "false";
+            post.innerHTML = `
+                <header class="post-header">
+                    <img class="avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="">
+                    <div class="post-author"><strong>@jamierivera</strong><span>✨</span></div>
+                    <button class="more-button" aria-label="More post options">···</button>
+                </header>
+                <div class="post-copy"><p></p></div>
+                <div class="post-image media-placeholder" role="img" aria-label="Image placeholder. Replace with a post photo."><div class="placeholder-content"><span class="placeholder-icon">▧</span><strong>Image placeholder</strong><span>Replace this area with a post photo</span></div></div>
+                <div class="post-stats"><span><span class="like-count">0</span> ❤️</span><span>0 💬 · 0 ↗️</span></div>
+                <div class="post-actions"><button class="action-button like-button" aria-label="Like post" aria-pressed="false"><span class="action-icon">🤍</span></button><button class="action-button comment-button" aria-label="Reply"><span class="action-icon">💬</span></button><button class="action-button" aria-label="Share"><span class="action-icon">📤</span></button><span class="action-spacer"></span><button class="action-button save-button" aria-label="Save post"><span class="action-icon">🔖</span></button></div>`;
+            post.querySelector(".post-copy p").textContent = message;
+            positionPostActions(post);
+            postList.prepend(post);
+            input.value = "";
+            showAllPosts();
+        });
+
+        postList.addEventListener("click", (event) => {
+            const post = event.target.closest(".post");
+            if (!post) return;
+            const like = event.target.closest(".like-button");
+            if (like) {
+                const liked = like.classList.toggle("liked");
+                like.setAttribute("aria-pressed", String(liked));
+                like.querySelector(".action-icon").textContent = liked ? "❤️" : "🤍";
+                const count = post.querySelector(".like-count");
+                count.textContent = Number(count.textContent) + (liked ? 1 : -1);
+                const media = post.querySelector(".post-media");
+                if (media) burstHearts(media);
+            }
+            if (event.target.closest(".save-button")) {
+                post.dataset.saved = post.dataset.saved === "true" ? "false" : "true";
+                event.target.closest(".save-button").classList.toggle("saved", post.dataset.saved === "true");
+            }
+            if (event.target.closest(".comment-button")) {
+                const input = document.querySelector("#post-input");
+                input.placeholder = "Write a reply...";
+                input.focus();
+            }
+        });
+
+        document.querySelectorAll(".follow").forEach((button) => {
+            button.addEventListener("click", () => {
+                const following = button.classList.toggle("following");
+                button.textContent = following ? "Following" : "Follow";
+            });
+        });
+
+        function showAllPosts() {
+            feedTitle.textContent = "Your feed";
+            postList.querySelectorAll(".post").forEach((post) => { post.hidden = false; });
+        }
+
+        document.querySelectorAll(".nav-item").forEach((button) => {
+            button.addEventListener("click", () => {
+                document.querySelectorAll(".nav-item").forEach((item) => item.classList.remove("active"));
+                button.classList.add("active");
+                const view = button.dataset.view;
+                postList.querySelectorAll(".post").forEach((post) => {
+                    post.hidden = view === "Saved" && post.dataset.saved !== "true";
+                });
+                feedTitle.textContent = view === "Saved" ? "Saved posts" : view === "For you" ? "Your feed" : view;
+                if (view === "Discover") document.querySelector("#search-input").focus();
+            });
+        });
+
+        document.querySelector("#search-input").addEventListener("input", (event) => {
+            const query = event.target.value.trim().toLowerCase();
+            postList.querySelectorAll(".post").forEach((post) => {
+                post.hidden = !post.textContent.toLowerCase().includes(query);
+            });
+            feedTitle.textContent = query ? "Search results" : "Your feed";
+        });
+
+        document.querySelector(".sort-select").addEventListener("change", (event) => {
+            if (event.target.value === "Popular") {
+                [...postList.children].sort((a, b) => Number(b.querySelector(".like-count").textContent) - Number(a.querySelector(".like-count").textContent)).forEach((post) => postList.append(post));
+            } else {
+                [...postList.children].reverse().forEach((post) => postList.prepend(post));
+            }
+        });
+    </script>
+</body>
+</html>
